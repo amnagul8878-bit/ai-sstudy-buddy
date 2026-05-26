@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationChain
 
@@ -56,19 +56,11 @@ if "memory" not in st.session_state:
     st.session_state.memory = ConversationBufferMemory()
 
 # Initialize LLM
-if not api_key:
-    st.error("❌ OPENAI_API_KEY not found. Add it to your .env file.")
-    st.stop()
-
-try:
-    llm = ChatOpenAI(
-        model="gpt-4o-mini",
-        temperature=0.7,
-        openai_api_key=api_key
-    )
-except Exception as e:
-    st.error("❌ Error loading model. Check API key.")
-    st.stop()
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    api_key=os.getenv("OPENAI_API_KEY"),
+    temperature=0.7
+)
 
 # Conversation chain
 conversation = ConversationChain(
@@ -98,5 +90,4 @@ for role, message in st.session_state.chat_history:
     if role == "user":
         st.markdown(f'<div class="user-msg">{message}</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="ai-msg">{message}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="ai-msg">{message}</div>', unsafe_allow_html=True)
